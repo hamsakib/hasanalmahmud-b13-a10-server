@@ -44,10 +44,10 @@ app.get('/', (req, res) => {
   res.send('🔄 ReSell Hub API is running');
 });
 
-// Surface errors instead of crashing the serverless function opaquely.
+// Centralized error handler — log details server-side, return a generic message.
 app.use((err, req, res, next) => {
   console.error('Unhandled route error:', err);
-  res.status(500).send({ message: 'Internal server error', error: err.message });
+  res.status(500).send({ message: 'Internal server error' });
 });
 
 process.on('unhandledRejection', (reason) => {
