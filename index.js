@@ -44,6 +44,16 @@ app.get('/', (req, res) => {
   res.send('🔄 ReSell Hub API is running');
 });
 
+// Surface errors instead of crashing the serverless function opaquely.
+app.use((err, req, res, next) => {
+  console.error('Unhandled route error:', err);
+  res.status(500).send({ message: 'Internal server error', error: err.message });
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled rejection:', reason);
+});
+
 // ---------- Start (local only; Vercel imports the app as a handler) ----------
 if (!process.env.VERCEL) {
   app.listen(port, () => {
