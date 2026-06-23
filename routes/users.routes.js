@@ -11,9 +11,11 @@ router.post('/', async (req, res) => {
   const user = req.body;
   const existing = await collections.users.findOne({ email: user.email });
   if (existing) return res.send({ message: 'User already exists', inserted: false });
+  // Only buyer/seller may be chosen at self-registration; admin is granted manually.
+  const safeRole = user.role === 'seller' ? 'seller' : 'buyer';
   const result = await collections.users.insertOne({
     ...user,
-    role: user.role || 'buyer',
+    role: safeRole,
     status: 'active',
     verified: false,
     createdAt: new Date(),
