@@ -7,20 +7,27 @@ const client = new MongoClient(uri, {
 });
 
 const collections = {};
+let connectPromise = null;
 
 async function connectDB() {
-  const db = client.db('resellHub');
-  collections.users = db.collection('users');
-  collections.products = db.collection('products');
-  collections.orders = db.collection('orders');
-  collections.reviews = db.collection('reviews');
-  collections.payments = db.collection('payments');
-  collections.wishlist = db.collection('wishlist');
-  collections.reports = db.collection('reports');
+  // Memoize so repeated calls (e.g. per serverless invocation) reuse one connection.
+  if (connectPromise) return connectPromise;
 
-  await client.db('admin').command({ ping: 1 });
-  console.log('✅ Connected to MongoDB. ReSell Hub database is ready.');
-  return collections;
+  connectPromise = (async () => {
+    await client.connect();
+    const db = client.db('resellHub');
+    collections.users = db.collection('users');
+    collections.products = db.collection('products');
+    collections.orders = db.collection('orders');
+    collections.reviews = db.collection('reviews');
+    collections.payments = db.collection('payments');
+    collections.wishlist = db.collection('wishlist');
+    collections.reports = db.collection('reports');
+    console.log('✅ Connected to MongoDB. ReSell Hub database is ready.');
+    return collections;
+  })();
+
+  return connectPromise;
 }
 
 module.exports = { connectDB, collections };

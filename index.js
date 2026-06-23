@@ -17,6 +17,18 @@ app.use(cors({
 }));
 app.use(express.json());
 
+// Ensure the database is connected before any route runs.
+// In serverless (Vercel) this runs per cold start and is memoized in db.js.
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.error('DB connection error:', err);
+    res.status(503).send({ message: 'Database unavailable' });
+  }
+});
+
 // ---------- Routes ----------
 app.use('/api/auth', require('./routes/auth.routes'));
 app.use('/api/users', require('./routes/users.routes'));
@@ -32,16 +44,11 @@ app.get('/', (req, res) => {
   res.send('🔄 ReSell Hub API is running');
 });
 
-// ---------- Start ----------
-connectDB()
-  .then(() => {
-    app.listen(port, () => {
-      console.log(`🚀 ReSell Hub server listening on port ${port}`);
-    });
-  })
-  .catch((err) => {
-    console.error('Failed to connect to database:', err);
-    process.exit(1);
+// ---------- Start (local only; Vercel imports the app as a handler) ----------
+if (!process.env.VERCEL) {
+  app.listen(port, () => {
+    console.log(`🚀 ReSell Hub server listening on port ${port}`);
   });
+}
 
 module.exports = app;
