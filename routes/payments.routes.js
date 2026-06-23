@@ -4,11 +4,21 @@ const { collections } = require('../db');
 const verifyToken = require('../middleware/verifyToken');
 const { verifyRole } = require('../middleware/verifyRole');
 
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const router = express.Router();
+
+// Lazily create the Stripe client so a missing key doesn't crash the whole
+// server at startup — it only errors when a payment endpoint is actually used.
+let stripeClient = null;
+const getStripe = () => {
+  if (!process.env.STRIPE_SECRET_KEY) return null;
+  if (!stripeClient) stripeClient = require('stripe')(process.env.STRIPE_SECRET_KEY);
+  return stripeClient;
+};
 
 // Create a Stripe payment intent.
 router.post('/create-payment-intent', verifyToken, async (req, res) => {
+  const stripe = getStripe();
+  if (!stripe) return res.status(503).send({ message: 'Payment service not configured' });
   const { amount } = req.body;
   if (!amount || amount < 1) return res.status(400).send({ message: 'Invalid amount' });
   const paymentIntent = await stripe.paymentIntents.create({
