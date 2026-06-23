@@ -2,10 +2,12 @@
 
 Backend REST API for **ReSell Hub**, an online marketplace for pre-owned products. Built with Express + MongoDB, secured with JWT and role-based authorization, and integrated with Stripe for payments.
 
-## 🌐 Live URL
+## 🌐 Live URL & Links
 
-- **API Base:** _add your deployed server URL here_
-- **Client Repo:** _add your client repo URL here_
+- **API Base:** https://hasanalmahmud-b13-a10-server.vercel.app
+- **Live Site:** https://hasanalmahmud-b13-a10.vercel.app
+- **Client Repo:** https://github.com/hamsakib/hasanalmahmud-b13-a10
+- **Server Repo:** https://github.com/hamsakib/hasanalmahmud-b13-a10-server
 
 ## 🎯 Purpose
 
