@@ -1,9 +1,18 @@
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const { toNodeHandler } = require('better-auth/node');
-const { connectDB } = require('./db');
-const { auth } = require('./auth');
+import 'dotenv/config';
+import express from 'express';
+import cors from 'cors';
+import { toNodeHandler } from 'better-auth/node';
+import { connectDB } from './db.js';
+import { auth } from './auth.js';
+import jwtRoutes from './routes/jwt.routes.js';
+import usersRoutes from './routes/users.routes.js';
+import productsRoutes from './routes/products.routes.js';
+import ordersRoutes from './routes/orders.routes.js';
+import wishlistRoutes from './routes/wishlist.routes.js';
+import reviewsRoutes from './routes/reviews.routes.js';
+import reportsRoutes from './routes/reports.routes.js';
+import paymentsRoutes from './routes/payments.routes.js';
+import statsRoutes from './routes/stats.routes.js';
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -38,15 +47,15 @@ app.use(async (req, res, next) => {
 });
 
 // ---------- Routes ----------
-app.use('/api/jwt', require('./routes/jwt.routes'));
-app.use('/api/users', require('./routes/users.routes'));
-app.use('/api/products', require('./routes/products.routes'));
-app.use('/api/orders', require('./routes/orders.routes'));
-app.use('/api/wishlist', require('./routes/wishlist.routes'));
-app.use('/api/reviews', require('./routes/reviews.routes'));
-app.use('/api/reports', require('./routes/reports.routes'));
-app.use('/api/payments', require('./routes/payments.routes'));
-app.use('/api/stats', require('./routes/stats.routes'));
+app.use('/api/jwt', jwtRoutes);
+app.use('/api/users', usersRoutes);
+app.use('/api/products', productsRoutes);
+app.use('/api/orders', ordersRoutes);
+app.use('/api/wishlist', wishlistRoutes);
+app.use('/api/reviews', reviewsRoutes);
+app.use('/api/reports', reportsRoutes);
+app.use('/api/payments', paymentsRoutes);
+app.use('/api/stats', statsRoutes);
 
 app.get('/', (req, res) => {
   res.send('🔄 ReSell Hub API is running');
@@ -69,4 +78,4 @@ if (!process.env.VERCEL) {
   });
 }
 
-module.exports = app;
+export default app;

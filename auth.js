@@ -1,7 +1,7 @@
-const { betterAuth } = require('better-auth');
-const { mongodbAdapter } = require('better-auth/adapters/mongodb');
-const { bearer } = require('better-auth/plugins');
-const { client } = require('./db');
+import { betterAuth } from 'better-auth';
+import { mongodbAdapter } from 'better-auth/adapters/mongodb';
+import { bearer } from 'better-auth/plugins';
+import { client } from './db.js';
 
 // Better Auth talks to the same MongoDB database the rest of the app uses.
 // We point its user model at the existing `users` collection so the role model
@@ -82,4 +82,4 @@ const auth = betterAuth({
     : undefined,
 });
 
-module.exports = { auth };
+export { auth };

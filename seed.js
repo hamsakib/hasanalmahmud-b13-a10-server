@@ -1,6 +1,6 @@
-require('dotenv').config();
-const { connectDB, collections } = require('./db');
-const { auth } = require('./auth');
+import 'dotenv/config';
+import { connectDB, collections } from './db.js';
+import { auth } from './auth.js';
 
 const SELLER = {
   name: 'Karim Electronics',

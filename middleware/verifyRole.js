@@ -1,4 +1,4 @@
-const { collections } = require('../db');
+import { collections } from '../db.js';
 
 // Role-based authorization. Pass allowed roles, e.g. verifyRole('admin', 'seller').
 // Must run after verifyToken so req.decoded.email is available.
@@ -20,4 +20,4 @@ const verifySelf = (req, res, next) => {
   next();
 };
 
-module.exports = { verifyRole, verifySelf };
+export { verifyRole, verifySelf };

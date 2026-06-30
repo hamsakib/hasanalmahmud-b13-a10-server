@@ -1,8 +1,9 @@
-const express = require('express');
-const { ObjectId } = require('mongodb');
-const { collections } = require('../db');
-const verifyToken = require('../middleware/verifyToken');
-const { verifyRole } = require('../middleware/verifyRole');
+import express from 'express';
+import { ObjectId } from 'mongodb';
+import Stripe from 'stripe';
+import { collections } from '../db.js';
+import verifyToken from '../middleware/verifyToken.js';
+import { verifyRole } from '../middleware/verifyRole.js';
 
 const router = express.Router();
 
@@ -11,7 +12,7 @@ const router = express.Router();
 let stripeClient = null;
 const getStripe = () => {
   if (!process.env.STRIPE_SECRET_KEY) return null;
-  if (!stripeClient) stripeClient = require('stripe')(process.env.STRIPE_SECRET_KEY);
+  if (!stripeClient) stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY);
   return stripeClient;
 };
 
@@ -73,4 +74,4 @@ router.get('/', verifyToken, verifyRole('admin'), async (req, res) => {
   res.send(payments);
 });
 
-module.exports = router;
+export default router;

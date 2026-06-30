@@ -1,4 +1,4 @@
-const { MongoClient, ServerApiVersion } = require('mongodb');
+import { MongoClient, ServerApiVersion } from 'mongodb';
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_CLUSTER}/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -32,4 +32,4 @@ async function connectDB() {
 
 // `client` is exported so Better Auth's MongoDB adapter can share the same
 // connection pool (see auth.js).
-module.exports = { connectDB, collections, client };
+export { connectDB, collections, client };

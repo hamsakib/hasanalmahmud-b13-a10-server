@@ -1,6 +1,6 @@
-const jwt = require('jsonwebtoken');
-const { fromNodeHeaders } = require('better-auth/node');
-const { auth } = require('../auth');
+import jwt from 'jsonwebtoken';
+import { fromNodeHeaders } from 'better-auth/node';
+import { auth } from '../auth.js';
 
 // Authenticates a request against a private API.
 // 1) Prefers a JWT in the Authorization header (issued by GET /api/jwt from a
@@ -38,4 +38,4 @@ const verifyToken = async (req, res, next) => {
   }
 };
 
-module.exports = verifyToken;
+export default verifyToken;

@@ -1,6 +1,6 @@
-const express = require('express');
-const { collections } = require('../db');
-const verifyToken = require('../middleware/verifyToken');
+import express from 'express';
+import { collections } from '../db.js';
+import verifyToken from '../middleware/verifyToken.js';
 
 const router = express.Router();
 
@@ -25,4 +25,4 @@ router.post('/', verifyToken, async (req, res) => {
   res.send(result);
 });
 
-module.exports = router;
+export default router;

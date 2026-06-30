@@ -1,7 +1,7 @@
-const express = require('express');
-const jwt = require('jsonwebtoken');
-const { fromNodeHeaders } = require('better-auth/node');
-const { auth } = require('../auth');
+import express from 'express';
+import jwt from 'jsonwebtoken';
+import { fromNodeHeaders } from 'better-auth/node';
+import { auth } from '../auth.js';
 
 const router = express.Router();
 
@@ -22,4 +22,4 @@ router.get('/', async (req, res) => {
   res.send({ token });
 });
 
-module.exports = router;
+export default router;

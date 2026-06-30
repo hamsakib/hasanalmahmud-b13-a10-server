@@ -1,8 +1,8 @@
-const express = require('express');
-const { ObjectId } = require('mongodb');
-const { collections } = require('../db');
-const verifyToken = require('../middleware/verifyToken');
-const { verifyRole, verifySelf } = require('../middleware/verifyRole');
+import express from 'express';
+import { ObjectId } from 'mongodb';
+import { collections } from '../db.js';
+import verifyToken from '../middleware/verifyToken.js';
+import { verifyRole, verifySelf } from '../middleware/verifyRole.js';
 
 const router = express.Router();
 
@@ -73,4 +73,4 @@ router.delete('/:id', verifyToken, verifyRole('admin'), async (req, res) => {
   res.send(result);
 });
 
-module.exports = router;
+export default router;
