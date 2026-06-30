@@ -1,7 +1,9 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const { toNodeHandler } = require('better-auth/node');
 const { connectDB } = require('./db');
+const { auth } = require('./auth');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -15,6 +17,12 @@ app.use(cors({
   ].filter(Boolean),
   credentials: true,
 }));
+
+// Better Auth owns all /api/auth/* routes (sign-up, sign-in, Google, session…).
+// It MUST be mounted before express.json() so it can read the raw request body.
+// Note the Express 5 splat syntax (`*splat`).
+app.all('/api/auth/*splat', toNodeHandler(auth));
+
 app.use(express.json());
 
 // Ensure the database is connected before any route runs.
@@ -30,7 +38,7 @@ app.use(async (req, res, next) => {
 });
 
 // ---------- Routes ----------
-app.use('/api/auth', require('./routes/auth.routes'));
+app.use('/api/jwt', require('./routes/jwt.routes'));
 app.use('/api/users', require('./routes/users.routes'));
 app.use('/api/products', require('./routes/products.routes'));
 app.use('/api/orders', require('./routes/orders.routes'));

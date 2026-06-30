@@ -6,24 +6,12 @@ const { verifyRole, verifySelf } = require('../middleware/verifyRole');
 
 const router = express.Router();
 
-// Create / upsert user on registration (public).
-router.post('/', async (req, res) => {
-  const user = req.body;
-  const existing = await collections.users.findOne({ email: user.email });
-  if (existing) return res.send({ message: 'User already exists', inserted: false });
-  // Only buyer/seller may be chosen at self-registration; admin is granted manually.
-  const safeRole = user.role === 'seller' ? 'seller' : 'buyer';
-  const result = await collections.users.insertOne({
-    ...user,
-    role: safeRole,
-    status: 'active',
-    verified: false,
-    createdAt: new Date(),
-  });
-  res.send(result);
-});
+// User creation is now handled by Better Auth (POST /api/auth/sign-up/email and
+// the Google flow), with role/status/verified defaults applied by the
+// `databaseHooks.user.create.before` hook in auth.js. The old upsert route is gone.
 
-// Get a user's role (used by client auth context).
+// Get a user's role. The client reads role straight off the Better Auth session,
+// but this endpoint is kept for any server-to-server / debugging use.
 router.get('/role/:email', verifyToken, async (req, res) => {
   const user = await collections.users.findOne({ email: req.params.email });
   res.send({ role: user?.role || 'buyer' });

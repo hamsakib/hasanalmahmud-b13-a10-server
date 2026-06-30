@@ -30,4 +30,6 @@ async function connectDB() {
   return connectPromise;
 }
 
-module.exports = { connectDB, collections };
+// `client` is exported so Better Auth's MongoDB adapter can share the same
+// connection pool (see auth.js).
+module.exports = { connectDB, collections, client };

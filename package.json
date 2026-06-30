@@ -12,6 +12,7 @@
   "author": "Hasan Al Mahmud",
   "license": "ISC",
   "dependencies": {
+    "better-auth": "^1.3.36",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
