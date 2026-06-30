@@ -1,5 +1,6 @@
 require('dotenv').config();
 const { connectDB, collections } = require('./db');
+const { auth } = require('./auth');
 
 const SELLER = {
   name: 'Karim Electronics',
@@ -8,6 +9,33 @@ const SELLER = {
   phone: '+8801712345678',
   location: 'Dhaka, Bangladesh',
 };
+
+// Demo accounts used by the "Demo Admin / Demo Seller" buttons on the login page.
+// Created through Better Auth so they have real credential accounts (password login).
+const DEMO_USERS = [
+  { name: 'ReSell Admin', email: 'admin@resellhub.com', password: 'Admin123', role: 'admin' },
+  { name: SELLER.name, email: SELLER.email, password: 'Seller123', role: 'seller' },
+  { name: 'Rakib Buyer', email: 'buyer@resellhub.com', password: 'Buyer123', role: 'buyer' },
+];
+
+async function ensureDemoUsers() {
+  for (const u of DEMO_USERS) {
+    try {
+      await auth.api.signUpEmail({
+        body: { name: u.name, email: u.email, password: u.password, role: u.role },
+      });
+      console.log(`  • created ${u.email}`);
+    } catch (e) {
+      // Already exists (or similar) — fine, we still normalize the role below.
+      console.log(`  • ${u.email} already present`);
+    }
+    // The create hook forces buyer/seller; promote admin explicitly here.
+    await collections.users.updateOne(
+      { email: u.email },
+      { $set: { role: u.role, status: 'active' } }
+    );
+  }
+}
 
 const products = [
   {
@@ -87,11 +115,14 @@ const products = [
 async function seed() {
   await connectDB();
 
-  // Upsert seller and fetch its id.
+  // Create the demo accounts (admin / seller / buyer) via Better Auth.
+  console.log('Seeding demo users…');
+  await ensureDemoUsers();
+
+  // Fill in the seller's profile fields and mark it a verified seller.
   await collections.users.updateOne(
     { email: SELLER.email },
-    { $set: { ...SELLER, role: 'seller', status: 'active', verified: true, createdAt: new Date() } },
-    { upsert: true }
+    { $set: { photo: SELLER.photo, phone: SELLER.phone, location: SELLER.location, verified: true } }
   );
   const seller = await collections.users.findOne({ email: SELLER.email });
 

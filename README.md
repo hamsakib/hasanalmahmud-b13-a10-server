@@ -1,6 +1,6 @@
 # 🔄 ReSell Hub — Server
 
-Backend REST API for **ReSell Hub**, an online marketplace for pre-owned products. Built with Express + MongoDB, secured with JWT and role-based authorization, and integrated with Stripe for payments.
+Backend REST API for **ReSell Hub**, an online marketplace for pre-owned products. Built with Express + MongoDB, authenticated with [Better Auth](https://www.better-auth.com) (email/password + Google) and role-based authorization, and integrated with Stripe for payments.
 
 ## 🌐 Live URL & Links
 
@@ -15,20 +15,25 @@ Provides all data and business logic for the marketplace: users, products, order
 
 ## 🔐 Security
 
-- **JWT authentication** — token issued at login, verified on every private route via `verifyToken`.
-- **Role-based authorization** — `verifyRole('admin'|'seller'|'buyer')` middleware protects sensitive endpoints.
-- **Environment variables** — MongoDB credentials, JWT secret, and Stripe key are all kept in `.env` (never committed).
+- **Better Auth sessions** — email/password and Google sign-in handled at `/api/auth/*`; every private route resolves the session via `verifyToken` (`auth.api.getSession`). Cookie-based, with bearer-token support.
+- **Role-based authorization** — `verifyRole('admin'|'seller'|'buyer')` middleware protects sensitive endpoints. Roles (buyer/seller chosen at registration; admin granted manually) live on the user document.
+- **Environment variables** — MongoDB credentials, Better Auth secret, Google OAuth keys, and Stripe key are all kept in `.env` (never committed).
 
 ## 📚 Collections
 
 `users` · `products` · `orders` · `reviews` · `payments` · `wishlist` · `reports`
 
+Better Auth also manages its own `session`, `account`, and `verification` collections; the `user` model is mapped onto the existing `users` collection so roles stay in one place.
+
 ## 🛣️ Key API Endpoints
 
 | Method | Route | Access | Description |
 |---|---|---|---|
-| POST | `/api/auth/jwt` | public | Issue JWT for a logged-in email |
-| POST/GET | `/api/users` | public/admin | Register user / list all users |
+| POST | `/api/auth/sign-up/email` | public | Register (email/password + role) — Better Auth |
+| POST | `/api/auth/sign-in/email` | public | Login — Better Auth |
+| GET | `/api/auth/sign-in/social` | public | Google sign-in — Better Auth |
+| GET | `/api/auth/get-session` | public | Current session/user |
+| GET | `/api/users` | admin | List all users |
 | PATCH | `/api/users/:id/role\|status\|verify` | admin | Manage users |
 | GET | `/api/products` | public | List with search/filter/sort/pagination |
 | POST/PATCH/DELETE | `/api/products/...` | seller | Product CRUD |
@@ -47,7 +52,7 @@ Provides all data and business logic for the marketplace: users, products, order
 | `mongodb` | Database driver |
 | `cors` | Cross-origin requests |
 | `dotenv` | Environment variables |
-| `jsonwebtoken` | JWT auth |
+| `better-auth` | Authentication & session management (email/password + Google) |
 | `stripe` | Payment processing |
 
 ## 🚀 Getting Started
@@ -66,10 +71,13 @@ PORT=5000
 DB_USER=
 DB_PASS=
 DB_CLUSTER=cluster0.xxxxx.mongodb.net
-ACCESS_TOKEN_SECRET=
+BETTER_AUTH_SECRET=
+BETTER_AUTH_URL=http://localhost:5000
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
 STRIPE_SECRET_KEY=
 CLIENT_URL=http://localhost:5173
 ```
 
 ## 📁 Tech Stack
-Node.js · Express 5 · MongoDB · JWT · Stripe
+Node.js · Express 5 · MongoDB · Better Auth · Stripe
