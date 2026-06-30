@@ -38,6 +38,7 @@ app.use(async (req, res, next) => {
 });
 
 // ---------- Routes ----------
+app.use('/api/jwt', require('./routes/jwt.routes'));
 app.use('/api/users', require('./routes/users.routes'));
 app.use('/api/products', require('./routes/products.routes'));
 app.use('/api/orders', require('./routes/orders.routes'));

@@ -15,7 +15,8 @@ Provides all data and business logic for the marketplace: users, products, order
 
 ## 🔐 Security
 
-- **Better Auth sessions** — email/password and Google sign-in handled at `/api/auth/*`; every private route resolves the session via `verifyToken` (`auth.api.getSession`). Cookie-based, with bearer-token support.
+- **Better Auth sessions** — email/password and Google sign-in handled at `/api/auth/*`.
+- **JWT on private APIs** — `GET /api/jwt` issues a signed JWT from the verified Better Auth session; `verifyToken` verifies that JWT on every private route (falling back to the session cookie). Role-based authorization on top via `verifyRole`.
 - **Role-based authorization** — `verifyRole('admin'|'seller'|'buyer')` middleware protects sensitive endpoints. Roles (buyer/seller chosen at registration; admin granted manually) live on the user document.
 - **Environment variables** — MongoDB credentials, Better Auth secret, Google OAuth keys, and Stripe key are all kept in `.env` (never committed).
 
@@ -73,6 +74,7 @@ DB_PASS=
 DB_CLUSTER=cluster0.xxxxx.mongodb.net
 BETTER_AUTH_SECRET=
 BETTER_AUTH_URL=http://localhost:5000
+JWT_SECRET=
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
 STRIPE_SECRET_KEY=

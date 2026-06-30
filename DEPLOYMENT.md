@@ -10,6 +10,7 @@ URL (the host users actually hit), even though the code runs on the server domai
 |---|---|
 | `DB_USER`, `DB_PASS`, `DB_CLUSTER` | MongoDB Atlas credentials |
 | `BETTER_AUTH_SECRET` | long random secret (same one everywhere) |
+| `JWT_SECRET` | long random secret for signing private-API JWTs |
 | `BETTER_AUTH_URL` | **the CLIENT public URL**, e.g. `https://hasanalmahmud-b13-a10.vercel.app` |
 | `CLIENT_URL` | same as above — the client origin (CORS + trusted origin) |
 | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Google OAuth credentials |
